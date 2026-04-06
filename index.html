@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Surat dari Kartini — RevoU</title>
+  <link rel="icon" type="image/webp" href="images/revoulogo.webp">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,8 +26,8 @@
       background-position: center;
       transition: opacity 2s ease;
     }
-    #bg-night { background-image: url('images/BG-Night.png'); opacity: 1; z-index: 0; animation: candle 6s ease-in-out infinite; }
-    #bg-light { background-image: url('images/BG-Light.png'); opacity: 0; z-index: 1; }
+    #bg-night { background-image: url('images/BG-Night.webp'); opacity: 1; z-index: 0; animation: candle 6s ease-in-out infinite; }
+    #bg-light { background-image: url('images/BG-Light.webp'); opacity: 0; z-index: 1; }
     #bg-overlay {
       position: fixed;
       inset: 0;
@@ -153,7 +155,7 @@
     .lf img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
     .lb {
       transform: rotateY(180deg);
-      background: url('images/blank.png') top center / 100% auto no-repeat;
+      background: url('images/blank.webp') top center / 100% auto no-repeat;
       background-color: #e2d0a8;
       display: flex; align-items: center; justify-content: center;
     }
@@ -270,7 +272,7 @@
 <!-- SCREEN: Already Played                             -->
 <!-- ══════════════════════════════════════════════════ -->
 <div id="s-played" class="screen" style="text-align:center;padding:24px">
-  <img src="images/revoulogo.png" alt="RevoU" style="width:54px;height:54px;object-fit:contain;margin:0 auto 22px">
+  <img src="images/revoulogo.webp" alt="RevoU" style="width:54px;height:54px;object-fit:contain;margin:0 auto 22px">
   <p class="f-title c-gold" style="font-size:2.4rem;font-weight:400;margin-bottom:12px">Surat Sudah Dibuka</p>
   <div class="divider" style="width:140px;margin:0 auto 18px"></div>
   <p class="f-body c-parch" style="font-size:.9rem;opacity:.75;line-height:1.8">
@@ -284,7 +286,7 @@
 <div id="s-intro" class="screen" style="padding:40px 24px">
   <div style="max-width:400px;width:100%;text-align:center">
 
-    <img src="images/revoulogo.png" alt="RevoU" style="width:66px;height:66px;object-fit:contain;margin:0 auto 26px">
+    <img src="images/revoulogo.webp" alt="RevoU" style="width:66px;height:66px;object-fit:contain;margin:0 auto 26px">
 
     <p class="f-title c-lt" style="font-size:.8rem;letter-spacing:.32em;text-transform:uppercase;margin-bottom:2px">Surat dari</p>
     <h1 class="f-title c-gold selamat" style="font-size:clamp(4rem,13vw,6rem);font-weight:400;letter-spacing:.05em;line-height:1;margin-bottom:18px">KARTINI</h1>
@@ -313,7 +315,7 @@
 
   <!-- Header -->
   <div class="game-header" style="text-align:center;flex-shrink:0;padding-top:8px">
-    <img src="images/revoulogo.png" alt="RevoU" style="width:46px;height:46px;object-fit:contain;margin:0 auto 8px">
+    <img src="images/revoulogo.webp" alt="RevoU" style="width:46px;height:46px;object-fit:contain;margin:0 auto 8px">
     <p class="f-title c-lt" style="font-size:.7rem;letter-spacing:.3em;text-transform:uppercase">Surat dari</p>
     <h2 class="f-title c-gold" style="font-size:clamp(2.2rem,7vw,3.6rem);font-weight:400;letter-spacing:.05em;line-height:1.05">KARTINI</h2>
   </div>
@@ -325,19 +327,19 @@
     <div class="letters-row">
       <div class="lw lw-item" id="lw0" onclick="pick(0)">
         <div class="li" id="li0">
-          <div class="lf"><img src="images/A.png" alt="Surat A"></div>
+          <div class="lf"><img src="images/A.webp" alt="Surat A"></div>
           <div class="lb"><div class="lb-text" id="bt0"></div></div>
         </div>
       </div>
       <div class="lw lw-item" id="lw1" onclick="pick(1)">
         <div class="li" id="li1">
-          <div class="lf"><img src="images/B.png" alt="Surat B"></div>
+          <div class="lf"><img src="images/B.webp" alt="Surat B"></div>
           <div class="lb"><div class="lb-text" id="bt1"></div></div>
         </div>
       </div>
       <div class="lw lw-item" id="lw2" onclick="pick(2)">
         <div class="li" id="li2">
-          <div class="lf"><img src="images/C.png" alt="Surat C"></div>
+          <div class="lf"><img src="images/C.webp" alt="Surat C"></div>
           <div class="lb"><div class="lb-text" id="bt2"></div></div>
         </div>
       </div>
@@ -347,13 +349,13 @@
     <div class="letters-row">
       <div class="lw lw-item" id="lw3" onclick="pick(3)">
         <div class="li" id="li3">
-          <div class="lf"><img src="images/D.png" alt="Surat D"></div>
+          <div class="lf"><img src="images/D.webp" alt="Surat D"></div>
           <div class="lb"><div class="lb-text" id="bt3"></div></div>
         </div>
       </div>
       <div class="lw lw-item" id="lw4" onclick="pick(4)">
         <div class="li" id="li4">
-          <div class="lf"><img src="images/E.png" alt="Surat E"></div>
+          <div class="lf"><img src="images/E.webp" alt="Surat E"></div>
           <div class="lb"><div class="lb-text" id="bt4"></div></div>
         </div>
       </div>
@@ -376,10 +378,10 @@
 <!-- ══════════════════════════════════════════════════ -->
 <div id="s-result" class="screen" style="padding:24px 20px;text-align:center">
 
-  <img src="images/revoulogo.png" alt="RevoU" style="width:54px;height:54px;object-fit:contain;margin:0 auto 16px;flex-shrink:0">
+  <img src="images/revoulogo.webp" alt="RevoU" style="width:54px;height:54px;object-fit:contain;margin:0 auto 16px;flex-shrink:0">
 
   <div class="paper-wrap">
-    <img src="images/blank.png" alt="">
+    <img src="images/blank.webp" alt="">
     <div class="paper-text">
 
       <p id="r-greeting" class="f-title c-brown selamat" style="font-size:clamp(1.3rem,5vw,1.9rem);font-weight:700;line-height:1.2;margin-bottom:4px"></p>
@@ -403,6 +405,31 @@
 </div>
 
 <script>
+// ─── Supabase ────────────────────────────────────────────────
+const _sb = supabase.createClient(
+  'https://xnxxcjycmkttsbiyuupv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhueHhjanljbWt0dHNiaXl1dXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MzU3MzgsImV4cCI6MjA2OTAxMTczOH0.LO9ejkKd25tCUrG132BYo7-jCnBslA6qbiaEmiaFmPg'
+);
+
+async function checkPlayed(email) {
+  const { data } = await _sb.from('kartini_participants').select('id').eq('email', email).maybeSingle();
+  return !!data;
+}
+
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycby3-B94IFN9oouEOKZv_T2WNLZcPd5WX7Ng4H_pQk0yRtTALIXGsnYIfbFNEm1SfNFi/exec';
+
+async function saveParticipant(name, email, prizeName, prizeDetail) {
+  const playedAt = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+  await Promise.all([
+    _sb.from('kartini_participants').insert({ name, email, prize_name: prizeName, prize_detail: prizeDetail }),
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ name, email, prize_name: prizeName, prize_detail: prizeDetail, played_at: playedAt }),
+    }).catch(() => {}),
+  ]);
+}
+
 // ─── Constants & canvas refs (declared first to avoid TDZ) ───
 const PRIZES = [
   { name: 'Paket Lengkap Kartini', detail: 'BNSP + AI Free Learning + Starter Kit', w: 50 },
@@ -428,12 +455,20 @@ function show(id) {
 }
 
 // ─── Intro Form ──────────────────────────────────────────────
-document.getElementById('intro-form').addEventListener('submit', function(e) {
+document.getElementById('intro-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   pName  = document.getElementById('inp-name').value.trim();
-  pEmail = document.getElementById('inp-email').value.trim();
+  pEmail = document.getElementById('inp-email').value.trim().toLowerCase();
   if (!pName || !pEmail) return;
 
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Memeriksa...';
+
+  if (await checkPlayed(pEmail)) { show('s-played'); btn.disabled = false; btn.textContent = 'Mulai Bermain'; return; }
+
+  btn.disabled = false;
+  btn.textContent = 'Mulai Bermain';
   phase = 'select';
   setClickable(true);
   show('s-game');
@@ -560,7 +595,7 @@ function flipCard(idx, cb) {
 
 // ─── Result screen ───────────────────────────────────────────
 function showResult() {
-  sessionStorage.setItem('kartini_v1', '1');
+  saveParticipant(pName, pEmail, prize.name, prize.detail);
   document.getElementById('r-greeting').textContent = `Selamat, ${firstName()}!`;
   document.getElementById('r-name').textContent     = prize.name;
   document.getElementById('r-detail').textContent   = prize.detail;
@@ -659,7 +694,7 @@ function loop() {
 // ─── Init (runs last, after all functions are defined) ───────
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
-sessionStorage.getItem('kartini_v1') ? show('s-played') : show('s-intro');
+show('s-intro');
 </script>
 </body>
 </html>
