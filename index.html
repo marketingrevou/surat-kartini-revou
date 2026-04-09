@@ -442,7 +442,7 @@ const ctx = cv.getContext('2d');
 
 // ─── State ───────────────────────────────────────────────────
 let pName  = '', pEmail = '';
-let pChoice = -1, hostRev = -1, swTarget = -1, finalPick = -1, peekIdx = -1;
+let pChoice = -1, finalPick = -1;
 let prize = null;
 let phase = 'idle';
 let typeTmr = null;
@@ -481,7 +481,6 @@ document.getElementById('intro-form').addEventListener('submit', async function(
   });
   document.getElementById('sw-btns').style.display = 'none';
   document.getElementById('t-text').textContent = '';
-  peekIdx = -1;
 
   setTimeout(() => {
     type(`Halo ${firstName()}, pilihlah satu surat dari Kartini...`);
@@ -493,116 +492,50 @@ function firstName() { return pName.split(' ')[0]; }
 // ─── Letter click ────────────────────────────────────────────
 function pick(idx) {
   if (phase !== 'select') return;
-  phase = 'host';
+  phase = 'selected';
   pChoice = idx;
 
   setClickable(false);
   document.getElementById('lw'+idx).classList.add('sel');
 
-  type(
-    `Kamu memilih Surat ${LBL[idx]}... Kartini akan membuka salah satu surat yang lain.`,
-    () => {
-      // Host reveals one non-chosen letter as empty
-      const opts = [0,1,2,3,4].filter(i => i !== pChoice);
-      hostRev = opts[Math.floor(Math.random() * opts.length)];
-
-      setTimeout(() => {
-        setContent(hostRev, 'zonk');
-        flipCard(hostRev, () => {
-          setTimeout(() => {
-            type(
-              `Surat ${LBL[hostRev]} ternyata kosong... Masih ada ${[0,1,2,3,4].filter(i => i !== pChoice && i !== hostRev).length} surat lain. Apakah kamu ingin mengintip salah satunya?`,
-              () => {
-                phase = 'peek';
-                showPeekBtn();
-              }
-            );
-          }, 450);
-        });
-      }, 700);
-    }
-  );
-}
-
-// ─── Switch / Stay ───────────────────────────────────────────
-function showSwitchBtns() {
-  const el = document.getElementById('sw-btns');
-  el.style.display = 'block';
-  el.innerHTML = `
-    <div class="sw-wrap">
-      <button class="btn-o" onclick="decide('stay')">Tetap Bertahan</button>
-      <button class="btn-g" onclick="decide('switch')">Ganti Pilihan</button>
-    </div>`;
-}
-
-function showPeekBtn() {
-  const el = document.getElementById('sw-btns');
-  el.style.display = 'block';
-  el.innerHTML = `
-    <div class="sw-wrap">
-      <button class="btn-o" onclick="doPeek()">Cek Surat Lain</button>
-    </div>`;
-}
-
-function doPeek() {
-  if (phase !== 'peek') return;
-  phase = 'peeking';
-  document.getElementById('sw-btns').style.display = 'none';
-
-  // Pick a random letter to peek: not player's pick, not already-revealed empty
-  const peekOpts = [0,1,2,3,4].filter(i => i !== pChoice && i !== hostRev);
-  peekIdx = peekOpts[Math.floor(Math.random() * peekOpts.length)];
-
-  // swTarget: one of the remaining letters (not pChoice, hostRev, or peekIdx)
-  const swOpts = peekOpts.filter(i => i !== peekIdx);
-  swTarget = swOpts[Math.floor(Math.random() * swOpts.length)];
-
-  // 50% chance the peeked letter is empty; 50% it shows a teaser prize
-  const peekIsEmpty = Math.random() < 0.5;
-  let peekPrize = null;
-  if (!peekIsEmpty) {
-    const r = Math.random() * 100;
-    peekPrize = r < 50 ? PRIZES[0] : r < 75 ? PRIZES[1] : PRIZES[2];
-  }
-
-  setContent(peekIdx, peekIsEmpty ? 'zonk' : 'peek', peekPrize);
-  document.getElementById('lw'+peekIdx).classList.add('no-click');
-
-  flipCard(peekIdx, () => {
-    setTimeout(() => {
-      const msg = peekIsEmpty
-        ? `Surat ${LBL[peekIdx]} juga kosong... Apakah kamu ingin tetap dengan Surat ${LBL[pChoice]}, atau berpindah ke Surat ${LBL[swTarget]}?`
-        : `Surat ${LBL[peekIdx]} menyimpan sesuatu! Apakah kamu ingin tetap dengan Surat ${LBL[pChoice]}, atau berpindah ke Surat ${LBL[swTarget]}?`;
-      type(msg, () => {
-        phase = 'switch';
-        showSwitchBtns();
-      });
-    }, 450);
+  type(`Kamu memilih Surat ${LBL[idx]}. Yakin ingin membuka surat ini?`, () => {
+    showConfirmBtns();
   });
 }
 
-function decide(choice) {
-  if (phase !== 'switch') return;
+// ─── Confirm / Change ────────────────────────────────────────
+function showConfirmBtns() {
+  const el = document.getElementById('sw-btns');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div class="sw-wrap">
+      <button class="btn-o" onclick="chooseDifferent()">Pilih Lain</button>
+      <button class="btn-g" onclick="openLetter()">Buka Surat</button>
+    </div>`;
+}
+
+function chooseDifferent() {
+  if (phase !== 'selected') return;
+  phase = 'select';
+  document.getElementById('lw'+pChoice).classList.remove('sel');
+  document.getElementById('sw-btns').style.display = 'none';
+  pChoice = -1;
+  setClickable(true);
+  type(`Pilihlah surat yang lain, ${firstName()}...`);
+}
+
+function openLetter() {
+  if (phase !== 'selected') return;
   phase = 'done';
   document.getElementById('sw-btns').style.display = 'none';
+  finalPick = pChoice;
 
-  finalPick = choice === 'switch' ? swTarget : pChoice;
-
-  // Determine prize now (everyone wins)
   const r = Math.random() * 100;
   prize = r < 50 ? PRIZES[0] : r < 75 ? PRIZES[1] : PRIZES[2];
 
-  // Update highlights
-  [0,1,2,3,4].forEach(i => document.getElementById('lw'+i).classList.remove('sel'));
-  document.getElementById('lw'+finalPick).classList.add('sel');
-
-  const msg = choice === 'switch'
-    ? `Kamu berpindah ke Surat ${LBL[finalPick]}! Saatnya membuka suratmu...`
-    : `Kamu bertahan dengan Surat ${LBL[finalPick]}. Saatnya membuka suratmu...`;
-
-  type(msg, () => {
+  type(`Saatnya membuka Surat ${LBL[finalPick]}...`, () => {
     setTimeout(() => {
-      setContent(finalPick, 'prize');
+      setContent(finalPick);
       document.getElementById('lw'+finalPick).classList.add('glow-prize');
       flipCard(finalPick, () => {
         setTimeout(showResult, 1400);
@@ -620,21 +553,11 @@ function setClickable(on) {
   });
 }
 
-function setContent(idx, kind, peekPrize) {
+function setContent(idx) {
   const el = document.getElementById('bt'+idx);
-  if (kind === 'zonk') {
-    el.innerHTML = `
-      <p class="f-title c-mbrown" style="font-size:clamp(.8rem,2.2vw,1.15rem);font-weight:600;opacity:.75">Surat Kosong</p>
-      <p class="f-body" style="font-size:.62rem;color:#7a4020;margin-top:4px;opacity:.55">— Coba lagi tahun depan! —</p>`;
-  } else if (kind === 'peek') {
-    el.innerHTML = `
-      <p class="f-title c-brown" style="font-size:clamp(.75rem,2vw,1.1rem);font-weight:700;line-height:1.2">${peekPrize.name}</p>
-      <p class="f-body c-mbrown" style="font-size:clamp(.5rem,1.3vw,.65rem);margin-top:5px;opacity:.65;line-height:1.5;font-style:italic">Ada penawaran di sini...</p>`;
-  } else {
-    el.innerHTML = `
-      <p class="f-title c-brown" style="font-size:clamp(.75rem,2vw,1.1rem);font-weight:700;line-height:1.2">${prize.name}</p>
-      <p class="f-body c-mbrown" style="font-size:clamp(.5rem,1.3vw,.65rem);margin-top:5px;opacity:.85;line-height:1.5">${prize.detail}</p>`;
-  }
+  el.innerHTML = `
+    <p class="f-title c-brown" style="font-size:clamp(.75rem,2vw,1.1rem);font-weight:700;line-height:1.2">${prize.name}</p>
+    <p class="f-body c-mbrown" style="font-size:clamp(.5rem,1.3vw,.65rem);margin-top:5px;opacity:.85;line-height:1.5">${prize.detail}</p>`;
 }
 
 function flipCard(idx, cb) {
